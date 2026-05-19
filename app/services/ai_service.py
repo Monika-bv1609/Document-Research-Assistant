@@ -1,17 +1,9 @@
-import os
-import requests
-
-from dotenv import load_dotenv
 from app.tools.calculator import (
     calculate_expression
 )
 
 from app.tools.current_time import (
     get_current_time
-)
-
-from app.tools.wikipedia_tool import (
-    search_wikipedia
 )
 
 from app.tools.weather import (
@@ -22,8 +14,9 @@ from app.tools.web_search import (
     search_web
 )
 
-# Load environment variables
-load_dotenv()
+from app.services.tool_router import (
+    choose_tool
+)
 
 
 def generate_ai_response(
@@ -31,71 +24,55 @@ def generate_ai_response(
     system_prompt: str,
     temperature: float
 ):
-    
-    
-    # Detect time requests
-    if "time" in question.lower():
 
-        # Call time tool
-        return get_current_time()
+    # Choose appropriate tool
+    decision = choose_tool(question)
 
-    # Detect calculation requests
-    if "calculate" in question.lower():
+    tool = decision["tool"]
 
-        # Extract math expression
-        expression = question.lower().replace(
-            "calculate",
-            ""
-        ).strip()
+    reason = decision["reason"]
 
-        # Call calculator tool
-        result = calculate_expression(
+    print(f"Selected Tool: {tool}")
+
+    print(f"Reason: {reason}")
+
+    # Calculator workflow
+    if tool == "calculator":
+
+        expression = (
+            question
+            .replace("calculate", "")
+            .strip()
+        )
+
+        return calculate_expression(
             expression
         )
 
-        return result
-    
-    # Detect Wikipedia search requests
-    if "who is" in question.lower():
+    # Time workflow
+    elif tool == "time":
 
-        # Extract topic
-        topic = question.lower().replace(
-            "who is",
-            ""
-        ).strip()
+        return get_current_time()
 
-        # Call Wikipedia tool
-        return search_wikipedia(topic)
-    
-    # Detect weather requests
-    if "weather" in question.lower():
+    # Weather workflow
+    elif tool == "weather":
 
-        # Extract city name
-        city = question.lower().replace(
-            "weather in",
-            ""
-        ).strip()
+        city = (
+            question
+            .replace("weather in", "")
+            .strip()
+        )
 
-        # Call weather tool
         return get_weather(city)
-    
-    # Detect web search requests
-    if "search" in question.lower():
 
-        # Extract search query
-        query = question.lower().replace(
-            "search",
-            ""
-        ).strip()
+    # Web search workflow
+    elif tool == "web_search":
 
-        # Call web search tool
-        results = search_web(query)
-
-        return results
+        return search_web(question)
 
     # Default AI response
     return f"""
-    AI Response:
+    AI Response
 
     Question:
     {question}
