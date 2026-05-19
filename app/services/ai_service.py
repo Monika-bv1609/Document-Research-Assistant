@@ -26,15 +26,7 @@ def generate_ai_response(
 ):
 
     # Choose appropriate tool
-    decision = choose_tool(question)
-
-    tool = decision["tool"]
-
-    reason = decision["reason"]
-
-    print(f"Selected Tool: {tool}")
-
-    print(f"Reason: {reason}")
+    tool = choose_tool(question)
 
     # Calculator workflow
     if tool == "calculator":
