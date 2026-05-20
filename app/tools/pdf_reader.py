@@ -1,5 +1,9 @@
 from pypdf import PdfReader
 
+from app.tools.text_chunker import (
+    chunk_text
+)
+
 
 def read_pdf(
     file_path: str
@@ -22,7 +26,12 @@ def read_pdf(
                 + "\n"
             )
 
-        return text
+        # Create chunks
+        chunks = chunk_text(
+            text
+        )
+
+        return chunks
 
     except Exception as e:
 
