@@ -5,7 +5,7 @@ from app.models.user import User
 from app.routes.health import router as health_router
 from app.routes.user import router as user_router
 from app.routes.ai import router as ai_router
-
+from app.routes.pdf import (router as pdf_router)
 
 # Creates tables automatically in PostgreSQL.
 Base.metadata.create_all(bind=engine)  
@@ -15,6 +15,7 @@ app = FastAPI()
 app.include_router(health_router)
 app.include_router(user_router)
 app.include_router(ai_router)
+app.include_router(pdf_router)
 
 @app.get("/")
 async def home():
