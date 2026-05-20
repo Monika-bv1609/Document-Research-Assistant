@@ -22,28 +22,40 @@ from app.agents.research_agent import (
     research_ai_topic
 )
 
+from app.agents.planner_agent import (
+    create_execution_plan
+)
+
+
 def generate_ai_response(
     question: str,
     system_prompt: str,
     temperature: float
 ):
 
-    # Choose appropriate tool
-    tool = choose_tool(question)
+    # Generate execution plan
+    plan = create_execution_plan(
+        question
+    )
 
-        # Research agent workflow
+    # Execute research workflow
     if (
 
-        "summarize" in question.lower()
+        "web_search" in plan
 
-        or
+        and
 
-        "research" in question.lower()
+        "summarize" in plan
     ):
 
         return research_ai_topic(
             question
         )
+
+    # Single tool routing
+    tool = choose_tool(
+        question
+    )
 
     # Calculator workflow
     if tool == "calculator":
@@ -78,18 +90,19 @@ def generate_ai_response(
     elif tool == "web_search":
 
         return search_web(question)
-    
- 
-    # Default AI response
+
+    # Default response
     return f"""
-    AI Response
 
-    Question:
-    {question}
+AI Response
 
-    System Prompt:
-    {system_prompt}
+Question:
+{question}
 
-    Temperature:
-    {temperature}
-    """
+System Prompt:
+{system_prompt}
+
+Temperature:
+{temperature}
+
+"""
