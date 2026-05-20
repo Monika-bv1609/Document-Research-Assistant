@@ -1,10 +1,22 @@
-import os
-import requests
+from app.tools.calculator import (
+    calculate_expression
+)
 
-from dotenv import load_dotenv
+from app.tools.current_time import (
+    get_current_time
+)
 
-# Load environment variables
-load_dotenv()
+from app.tools.weather import (
+    get_weather
+)
+
+from app.tools.web_search import (
+    search_web
+)
+
+from app.services.tool_router import (
+    choose_tool
+)
 
 
 def generate_ai_response(
@@ -13,59 +25,53 @@ def generate_ai_response(
     temperature: float
 ):
 
-    try:
+    # Choose appropriate tool
+    tool = choose_tool(question)
 
-        response = requests.post(
+    # Calculator workflow
+    if tool == "calculator":
 
-            "https://api.aimlapi.com/v1/chat/completions",
-
-            headers={
-
-                # API authentication
-                "Authorization": (
-                    f"Bearer {os.getenv('OPENAI_API_KEY')}"
-                ),
-
-                "Content-Type": "application/json"
-            },
-
-            json={
-
-                # AI model
-                "model": "openai/gpt-4.1-mini",
-
-                # AI conversation messages
-                "messages": [
-
-                    {
-                        "role": "system",
-                        "content": system_prompt
-                    },
-
-                    {
-                        "role": "user",
-                        "content": question
-                    }
-                ],
-
-                # Controls creativity
-                "temperature": temperature,
-
-                # Response size limit
-                "max_tokens": 512
-            }
+        expression = (
+            question
+            .replace("calculate", "")
+            .strip()
         )
 
-        # Convert response to JSON
-        data = response.json()
+        return calculate_expression(
+            expression
+        )
 
-        # Extract AI response
-        return data["choices"][0]["message"]["content"]
+    # Time workflow
+    elif tool == "time":
 
-    except Exception as e:
+        return get_current_time()
 
-        print(response.text)
+    # Weather workflow
+    elif tool == "weather":
 
-        print(e)
+        city = (
+            question
+            .replace("weather in", "")
+            .strip()
+        )
 
-        return "AI request failed."
+        return get_weather(city)
+
+    # Web search workflow
+    elif tool == "web_search":
+
+        return search_web(question)
+
+    # Default AI response
+    return f"""
+    AI Response
+
+    Question:
+    {question}
+
+    System Prompt:
+    {system_prompt}
+
+    Temperature:
+    {temperature}
+    """

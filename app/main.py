@@ -6,6 +6,7 @@ from app.routes.health import router as health_router
 from app.routes.user import router as user_router
 from app.routes.ai import router as ai_router
 
+
 # Creates tables automatically in PostgreSQL.
 Base.metadata.create_all(bind=engine)  
 
