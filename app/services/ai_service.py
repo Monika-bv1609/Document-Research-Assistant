@@ -18,6 +18,17 @@ from app.services.tool_router import (
     choose_tool
 )
 
+from app.agents.research_agent import (
+    research_ai_topic
+)
+
+from app.agents.planner_agent import (
+    create_execution_plan
+)
+
+from app.agents.executor_agent import (
+    execute_plan
+)
 
 def generate_ai_response(
     question: str,
@@ -25,8 +36,33 @@ def generate_ai_response(
     temperature: float
 ):
 
-    # Choose appropriate tool
-    tool = choose_tool(question)
+    # Generate execution plan
+    plan = create_execution_plan(
+        question
+    )
+
+    # Execute dynamic plan
+    return execute_plan(
+        plan,
+        question
+    )
+    
+
+    # Execute research workflow
+    if (
+
+
+        "summarize" in plan
+    ):
+
+        return research_ai_topic(
+            question
+        )
+
+    # Single tool routing
+    tool = choose_tool(
+        question
+    )
 
     # Calculator workflow
     if tool == "calculator":
@@ -62,16 +98,18 @@ def generate_ai_response(
 
         return search_web(question)
 
-    # Default AI response
+    # Default response
     return f"""
-    AI Response
 
-    Question:
-    {question}
+AI Response
 
-    System Prompt:
-    {system_prompt}
+Question:
+{question}
 
-    Temperature:
-    {temperature}
-    """
+System Prompt:
+{system_prompt}
+
+Temperature:
+{temperature}
+
+"""
