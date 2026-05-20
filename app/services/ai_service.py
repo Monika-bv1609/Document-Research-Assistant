@@ -26,6 +26,9 @@ from app.agents.planner_agent import (
     create_execution_plan
 )
 
+from app.agents.executor_agent import (
+    execute_plan
+)
 
 def generate_ai_response(
     question: str,
@@ -38,12 +41,16 @@ def generate_ai_response(
         question
     )
 
+    # Execute dynamic plan
+    return execute_plan(
+        plan,
+        question
+    )
+    
+
     # Execute research workflow
     if (
 
-        "web_search" in plan
-
-        and
 
         "summarize" in plan
     ):
