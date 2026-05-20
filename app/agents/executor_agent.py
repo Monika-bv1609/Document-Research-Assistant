@@ -1,17 +1,5 @@
-from app.tools.web_search import (
-    search_web
-)
-
-from app.tools.weather import (
-    get_weather
-)
-
-from app.tools.current_time import (
-    get_current_time
-)
-
-from app.tools.calculator import (
-    calculate_expression
+from app.tools.tool_registry import (
+    TOOLS
 )
 
 
@@ -31,7 +19,11 @@ def execute_plan(
         # Web search step
         if step == "web_search":
 
-            results = search_web(
+            tool_function = TOOLS[
+                "web_search"
+            ]
+
+            results = tool_function(
                 question
             )
 
@@ -79,44 +71,56 @@ continue to grow rapidly.
                 "final_response"
             ] = summary
 
-        # Weather step
-        elif step == "weather":
+        # Dynamic tool execution
+        elif step in TOOLS:
 
-            city = (
-                question
-                .replace("weather in", "")
-                .strip()
-            )
+            tool_function = TOOLS[
+                step
+            ]
 
-            weather = get_weather(
-                city
-            )
+            # Weather tool
+            if step == "weather":
 
-            context[
-                "final_response"
-            ] = weather
+                city = (
+                    question
+                    .replace(
+                        "weather in",
+                        ""
+                    )
+                    .strip()
+                )
 
-        # Time step
-        elif step == "time":
+                result = tool_function(
+                    city
+                )
 
-            context[
-                "final_response"
-            ] = get_current_time()
+            # Calculator tool
+            elif step == "calculator":
 
-        # Calculator step
-        elif step == "calculator":
+                expression = (
+                    question
+                    .replace(
+                        "calculate",
+                        ""
+                    )
+                    .strip()
+                )
 
-            expression = (
-                question
-                .replace("calculate", "")
-                .strip()
-            )
-
-            result = (
-                calculate_expression(
+                result = tool_function(
                     expression
                 )
-            )
+
+            # Time tool
+            elif step == "time":
+
+                result = tool_function()
+
+            # Other tools
+            else:
+
+                result = tool_function(
+                    question
+                )
 
             context[
                 "final_response"
