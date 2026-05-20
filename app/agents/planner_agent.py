@@ -43,6 +43,10 @@ def create_execution_plan(
                 "summarize"
             )
 
+            plan.append(
+                "analyze"
+            )
+
     elif tool == "weather":
 
         plan.append(

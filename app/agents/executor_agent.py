@@ -71,6 +71,40 @@ continue to grow rapidly.
                 "final_response"
             ] = summary
 
+        # Analyze step
+        elif step == "analyze":
+
+            summary = context.get(
+                "final_response",
+                ""
+            )
+
+            analysis = f"""
+
+AI Analysis Report
+
+{summary}
+
+Business Insight:
+AI adoption is accelerating across
+software, healthcare, enterprise,
+automation, and research industries.
+
+Trend Analysis:
+Companies are increasingly investing
+in AI-driven automation and intelligent
+workflow systems.
+
+Future Outlook:
+Agentic AI and autonomous systems
+are becoming major focus areas in
+modern software engineering.
+"""
+
+            context[
+                "final_response"
+            ] = analysis
+
         # Dynamic tool execution
         elif step in TOOLS:
 
