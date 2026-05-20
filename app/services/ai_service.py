@@ -18,6 +18,9 @@ from app.services.tool_router import (
     choose_tool
 )
 
+from app.agents.research_agent import (
+    research_ai_topic
+)
 
 def generate_ai_response(
     question: str,
@@ -27,6 +30,20 @@ def generate_ai_response(
 
     # Choose appropriate tool
     tool = choose_tool(question)
+
+        # Research agent workflow
+    if (
+
+        "summarize" in question.lower()
+
+        or
+
+        "research" in question.lower()
+    ):
+
+        return research_ai_topic(
+            question
+        )
 
     # Calculator workflow
     if tool == "calculator":
@@ -61,7 +78,8 @@ def generate_ai_response(
     elif tool == "web_search":
 
         return search_web(question)
-
+    
+ 
     # Default AI response
     return f"""
     AI Response
