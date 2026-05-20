@@ -1,3 +1,8 @@
+from app.services.tool_router import (
+    choose_tool
+)
+
+
 def create_execution_plan(
     question: str
 ):
@@ -6,52 +11,60 @@ def create_execution_plan(
 
     plan = []
 
-    # Research workflow
-    if (
+    # AI decides primary tool
+    tool = choose_tool(
+        question
+    )
 
-        "research" in question
+    print(
+        "AI SELECTED TOOL:",
+        tool
+    )
 
-        or
+    # Dynamic planning
 
-        "summarize" in question
-    ):
+    if tool == "web_search":
 
         plan.append(
             "web_search"
         )
 
-        plan.append(
-            "summarize"
-        )
+        # If research/summarize needed
+        if (
 
-    # Weather workflow
-    elif "weather" in question:
+            "summarize" in question
+
+            or
+
+            "research" in question
+        ):
+
+            plan.append(
+                "summarize"
+            )
+
+    elif tool == "weather":
 
         plan.append(
             "weather"
         )
 
-    # Time workflow
-    elif "time" in question:
+        if "summarize" in question:
 
-        plan.append(
-            "time"
-        )
+            plan.append(
+                "summarize"
+            )
 
-    # Calculator workflow
-    elif any(word in question for word in [
-
-        "calculate",
-        "multiply",
-        "add",
-        "subtract",
-        "*",
-        "+",
-        "-"
-    ]):
+    elif tool == "calculator":
 
         plan.append(
             "calculator"
+        )
+
+    elif tool == "time":
+
+        plan.append(
+            "time"
         )
 
     else:
