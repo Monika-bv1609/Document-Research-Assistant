@@ -1,24 +1,41 @@
 def chunk_text(
-    text: str,
-    chunk_size: int = 200
+    text: str
 ):
 
     chunks = []
 
-    # Split text into chunks
-    for index in range(
+    # Split by lines
+    lines = text.split("\n")
 
-        0,
-        len(text),
-        chunk_size
-    ):
+    current_chunk = ""
 
-        chunk = text[
-            index:index + chunk_size
-        ]
+    for line in lines:
+
+        line = line.strip()
+
+        if not line:
+
+            continue
+
+        # Build meaningful chunk
+        current_chunk += (
+            line + "\n"
+        )
+
+        # Save chunk after few lines
+        if len(current_chunk) > 200:
+
+            chunks.append(
+                current_chunk
+            )
+
+            current_chunk = ""
+
+    # Add remaining chunk
+    if current_chunk:
 
         chunks.append(
-            chunk
+            current_chunk
         )
 
     return chunks
