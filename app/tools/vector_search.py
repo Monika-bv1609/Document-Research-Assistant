@@ -11,7 +11,8 @@ def semantic_search(
 
     query: str,
     chunks: list,
-    chunk_embeddings
+    chunk_embeddings,
+    top_k: int = 3
 ):
 
     # Convert query to embedding
@@ -19,28 +20,29 @@ def semantic_search(
         [query]
     )
 
-    # Compare similarity
+    # Calculate similarities
     similarities = cosine_similarity(
 
         query_embedding,
         chunk_embeddings
     )[0]
 
-    # Best matching chunk index
-    best_match_index = (
-        similarities.argmax()
-    )
+    # Get top matching indices
+    top_indices = similarities.argsort()[
+        -top_k:
+    ][::-1]
 
-    # Best chunk
-    best_chunk = chunks[
-        best_match_index
-    ]
+    relevant_chunks = []
 
-    print(
-        "BEST MATCH SCORE:",
-        similarities[
-            best_match_index
-        ]
-    )
+    for index in top_indices:
 
-    return best_chunk
+        print(
+            "MATCH SCORE:",
+            similarities[index]
+        )
+
+        relevant_chunks.append(
+            chunks[index]
+        )
+
+    return relevant_chunks
