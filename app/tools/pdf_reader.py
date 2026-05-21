@@ -1,5 +1,7 @@
 from pypdf import PdfReader
 
+import re
+
 from app.tools.text_chunker import (
     chunk_text
 )
@@ -21,8 +23,27 @@ def read_pdf(
         # Read all pages
         for page in reader.pages:
 
-            text += (
+            page_text = (
                 page.extract_text()
+            )
+
+            # Remove weird spacing between characters
+            page_text = re.sub(
+
+                r'(?<=\w)\s(?=\w)',
+
+                '',
+
+                page_text
+            )
+
+            # Normalize spaces
+            page_text = " ".join(
+                page_text.split()
+            )
+
+            text += (
+                page_text
                 + "\n"
             )
 
