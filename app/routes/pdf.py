@@ -18,6 +18,10 @@ from app.tools.vector_search import (
     semantic_search
 )
 
+from app.services.rag_answer_generator import (
+    generate_rag_answer
+)
+
 router = APIRouter()
 
 # Store document chunks
@@ -106,16 +110,13 @@ async def ask_pdf(
         DOCUMENT_EMBEDDINGS
     )
 
-    # Clean answer
-    clean_answer = (
-        best_chunk
-        .replace("\n", " ")
-        .strip()
-    )
+    # Generate final AI answer
+    final_answer = (
+        generate_rag_answer(
 
-    # Limit response size
-    clean_answer = (
-        clean_answer[:150]
+            question,
+            best_chunk
+        )
     )
 
     return {
@@ -124,5 +125,5 @@ async def ask_pdf(
         question,
 
         "answer":
-        clean_answer
+        final_answer
     }
