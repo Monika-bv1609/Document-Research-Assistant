@@ -43,14 +43,18 @@ def generate_rag_answer(
 
         print(data)
 
+        # Extract response safely
         answer = data.get(
-
-            "response",
-
-            "No response generated."
+            "response"
         )
 
-        return answer
+        if not answer:
+
+            return (
+                "LLM could not generate answer."
+            )
+
+        return answer.strip()
 
     except Exception as e:
 

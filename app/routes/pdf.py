@@ -102,20 +102,25 @@ async def ask_pdf(
             "Please upload a PDF first."
         }
 
-    # Semantic search
-    best_chunk = semantic_search(
+    # Retrieve multiple relevant chunks
+    relevant_chunks = semantic_search(
 
         question,
         DOCUMENT_CHUNKS,
         DOCUMENT_EMBEDDINGS
     )
 
-    # Generate final AI answer
+    # Combine chunks into one context
+    combined_context = "\n\n".join(
+        relevant_chunks
+    )
+
+    # Generate final answer
     final_answer = (
         generate_rag_answer(
 
             question,
-            best_chunk
+            combined_context
         )
     )
 
@@ -125,5 +130,8 @@ async def ask_pdf(
         question,
 
         "answer":
-        final_answer
+        final_answer,
+
+        # "retrieved_chunks":
+        # relevant_chunks
     }
