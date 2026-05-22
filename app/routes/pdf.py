@@ -6,19 +6,19 @@ from fastapi import (
 
 import shutil
 
-from app.tools.pdf_reader import (
+from app.rag.processing.pdf_reader import (
     read_pdf
 )
 
-from app.tools.embedding_generator import (
+from app.rag.retrieval.embedding_generator import (
     generate_embeddings
 )
 
-from app.tools.vector_search import (
+from app.rag.retrieval.vector_search import (
     semantic_search
 )
 
-from app.services.rag_answer_generator import (
+from app.rag.generation.rag_answer_generator import (
     generate_rag_answer
 )
 
@@ -130,8 +130,5 @@ async def ask_pdf(
         question,
 
         "answer":
-        final_answer,
-
-        # "retrieved_chunks":
-        # relevant_chunks
+        final_answer
     }

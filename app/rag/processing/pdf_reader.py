@@ -2,7 +2,7 @@ from pypdf import PdfReader
 
 import re
 
-from app.tools.text_chunker import (
+from app.rag.processing.text_chunker import (
     chunk_text
 )
 

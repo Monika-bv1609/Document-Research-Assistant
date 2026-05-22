@@ -2,7 +2,7 @@ from sklearn.metrics.pairwise import (
     cosine_similarity
 )
 
-from app.tools.embedding_generator import (
+from app.rag.retrieval.embedding_generator import (
     model
 )
 
