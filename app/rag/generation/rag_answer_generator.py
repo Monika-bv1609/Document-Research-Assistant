@@ -1,65 +1,69 @@
-import requests
+from openai import OpenAI
+import os
+
+from dotenv import (
+    load_dotenv
+)
+
+load_dotenv()
+
+client = OpenAI(
+
+    api_key=os.getenv(
+        "GROQ_API_KEY"
+    ),
+    base_url="https://api.groq.com/openai/v1"
+)
 
 
 def generate_rag_answer(
 
-    question: str,
-    context: str
+    question,
+    context
 ):
 
     try:
 
         prompt = f"""
+
         Answer the question ONLY
-        using the provided context.
+        from the given context.
 
         Context:
         {context}
 
         Question:
         {question}
-
-        Give a short and clear answer.
         """
 
-        response = requests.post(
+        response = client.chat.completions.create(
 
-            "http://localhost:11434/api/generate",
+            model="llama-3.1-8b-instant",
 
-            json={
+            messages=[
 
-                "model":
-                "llama3.2",
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
 
-                "prompt":
-                prompt,
-
-                "stream":
-                False
-            }
+            temperature=0
         )
 
-        data = response.json()
-
-        print(data)
-
-        # Extract response safely
-        answer = data.get(
-            "response"
+        answer = (
+            response
+            .choices[0]
+            .message
+            .content
         )
 
-        if not answer:
+        return answer
 
-            return (
-                "LLM could not generate answer."
-            )
+    except Exception as error:
 
-        return answer.strip()
-
-    except Exception as e:
-
-        print(e)
+        print(error)
 
         return (
-            "Answer generation failed."
+            "LLM could not generate answer."
         )
