@@ -45,6 +45,7 @@ def generate_embeddings(
     )
 
     result = response.json()
+    print(response.json())
 
     embeddings = [
 
