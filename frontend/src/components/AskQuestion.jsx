@@ -36,11 +36,12 @@ function AskQuestion() {
                 "AI is analyzing document..."
             );
 
-            const response =
-                await axios.post(
-
-                    `https://ai-research-assistant-z0mu.onrender.com/ask-pdf`
-                );
+            const response = await axios.post(
+                "https://ai-research-assistant-z0mu.onrender.com/ask-pdf",
+                {
+                    question: question,
+                }
+            );
 
             setAnswer(
                 response.data.answer
