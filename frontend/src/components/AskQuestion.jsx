@@ -39,7 +39,7 @@ function AskQuestion() {
             const response =
                 await axios.post(
 
-                    `https://ai-research-assistant-z0mu.onrender.com`
+                    `https://ai-research-assistant-z0mu.onrender.com/ask-pdf`
                 );
 
             setAnswer(
