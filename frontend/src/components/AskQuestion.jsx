@@ -1,25 +1,14 @@
 import axios from "axios";
 
-import {
-    useState
-} from "react";
+import { useState } from "react";
 
 function AskQuestion() {
 
-    const [
-        question,
-        setQuestion
-    ] = useState("");
+    const [question, setQuestion] = useState("");
 
-    const [
-        answer,
-        setAnswer
-    ] = useState("");
+    const [answer, setAnswer] = useState("");
 
-    const [
-        loading,
-        setLoading
-    ] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const askQuestion = async () => {
 
@@ -35,21 +24,8 @@ function AskQuestion() {
                 "AI is analyzing document..."
             );
 
-            const formData = new FormData();
-
-            formData.append(
-                "question",
-                question
-            );
-
             const response = await axios.post(
-                "https://ai-research-assistant-z0mu.onrender.com/ask-pdf",
-                formData,
-                {
-                    headers: {
-                        "Content-Type": "multipart/form-data",
-                    },
-                }
+                `https://ai-research-assistant-z0mu.onrender.com/ask-pdf?question=${question}`
             );
 
             setAnswer(
@@ -101,6 +77,7 @@ function AskQuestion() {
                     disabled={loading}
                     className="bg-gradient-to-r from-purple-500 to-blue-500 hover:scale-105 transition-all duration-300 text-white px-8 rounded-xl font-semibold disabled:opacity-50"
                 >
+
                     {
                         loading
                         ? "Thinking..."
@@ -121,7 +98,10 @@ function AskQuestion() {
 
                 <p className="text-gray-200 leading-8 whitespace-pre-wrap">
 
-                    {answer || "AI response will appear here..."}
+                    {
+                        answer ||
+                        "AI response will appear here..."
+                    }
 
                 </p>
 
@@ -132,4 +112,3 @@ function AskQuestion() {
 }
 
 export default AskQuestion;
-
