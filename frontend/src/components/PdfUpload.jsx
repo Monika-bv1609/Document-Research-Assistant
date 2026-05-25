@@ -46,7 +46,7 @@ function PdfUpload() {
             const response =
                 await axios.post(
 
-                    "http://127.0.0.1:8000/read-pdf",
+                    "https://ai-research-assistant-z0mu.onrender.com",
 
                     formData
                 );

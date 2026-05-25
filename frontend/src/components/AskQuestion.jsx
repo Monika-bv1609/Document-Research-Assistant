@@ -39,7 +39,7 @@ function AskQuestion() {
             const response =
                 await axios.post(
 
-                    `http://127.0.0.1:8000/ask-pdf?question=${question}`
+                    `https://ai-research-assistant-z0mu.onrender.com`
                 );
 
             setAnswer(
