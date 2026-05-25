@@ -2,9 +2,6 @@ from sklearn.metrics.pairwise import (
     cosine_similarity
 )
 
-
-
-
 def semantic_search(
 
     query: str,
