@@ -24,7 +24,6 @@ function AskQuestion() {
     const askQuestion = async () => {
 
         if (!question) {
-
             return;
         }
 
@@ -36,10 +35,20 @@ function AskQuestion() {
                 "AI is analyzing document..."
             );
 
+            const formData = new FormData();
+
+            formData.append(
+                "question",
+                question
+            );
+
             const response = await axios.post(
                 "https://ai-research-assistant-z0mu.onrender.com/ask-pdf",
+                formData,
                 {
-                    question: question,
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
                 }
             );
 
@@ -47,15 +56,17 @@ function AskQuestion() {
                 response.data.answer
             );
 
-            setLoading(false);
-
         } catch (error) {
 
-            console.log(error);
+            console.log(
+                error.response?.data
+            );
 
             setAnswer(
                 "Question failed."
             );
+
+        } finally {
 
             setLoading(false);
         }
