@@ -17,30 +17,38 @@ function PdfUpload() {
     ] = useState("");
 
     const uploadPdf = async (
-
         event
     ) => {
 
-        const file = event.target.files[0];
+        const files =
+            event.target.files;
 
-        if (!file) {
+        if (!files.length) {
 
             return;
         }
 
-        const formData = new FormData();
+        const formData =
+            new FormData();
 
-        formData.append(
-            "file",
-            file
-        );
+        for (
+            let i = 0;
+            i < files.length;
+            i++
+        ) {
+
+            formData.append(
+                "files",
+                files[i]
+            );
+        }
 
         try {
 
             setLoading(true);
 
             setMessage(
-                "Processing PDF..."
+                "Processing PDFs..."
             );
 
             const response =
@@ -48,11 +56,22 @@ function PdfUpload() {
 
                     "https://ai-research-assistant-z0mu.onrender.com/read-pdf",
 
-                    formData
+                    formData,
+
+                    {
+                        headers: {
+                            "Content-Type":
+                            "multipart/form-data",
+                        },
+                    }
                 );
 
+            console.log(
+                response.data
+            );
+
             setMessage(
-                response.data.message
+                "PDFs uploaded successfully."
             );
 
             setLoading(false);
@@ -75,12 +94,13 @@ function PdfUpload() {
 
             <h2 className="text-2xl font-semibold text-white mb-4">
 
-                Upload PDF
+                Upload PDFs
 
             </h2>
 
             <input
                 type="file"
+                multiple
                 onChange={uploadPdf}
                 className="w-full bg-white/10 text-white border border-gray-600 rounded-xl p-4 cursor-pointer"
             />
@@ -89,7 +109,7 @@ function PdfUpload() {
 
                 {
                     loading
-                    ? "Processing PDF..."
+                    ? "Processing PDFs..."
                     : message
                 }
 
@@ -100,4 +120,3 @@ function PdfUpload() {
 }
 
 export default PdfUpload;
-
