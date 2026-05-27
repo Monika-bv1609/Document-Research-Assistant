@@ -2,102 +2,62 @@ from sklearn.metrics.pairwise import (
     cosine_similarity
 )
 
-import requests
+import numpy as np
 
-import os
-
-from dotenv import (
-    load_dotenv
+from app.rag.retrieval.embedding_generator import (
+    generate_embeddings
 )
-
-load_dotenv()
-
-
-def generate_query_embedding(
-    query: str
-):
-
-    url = (
-        "https://api.jina.ai/v1/embeddings"
-    )
-
-    headers = {
-
-        "Content-Type":
-        "application/json",
-
-        "Authorization":
-        f"Bearer {os.getenv('JINA_API_KEY')}"
-    }
-
-    data = {
-
-        "model":
-        "jina-embeddings-v2-base-en",
-
-        "input":
-        [query]
-    }
-
-    response = requests.post(
-
-        url,
-
-        headers=headers,
-
-        json=data
-    )
-
-    result = response.json()
-
-    embedding = (
-        result["data"][0]["embedding"]
-    )
-
-    return [embedding]
 
 
 def semantic_search(
 
-    query: str,
+    question,
 
-    chunks: list,
+    chunks,
 
-    chunk_embeddings,
+    embeddings,
 
-    top_k: int = 3
+    metadata
 ):
 
-    query_embedding = (
-        generate_query_embedding(
-            query
-        )
+    # Generate embedding for question
+    question_embedding = (
+        generate_embeddings(
+            [question]
+        )[0]
     )
 
+    # Convert to numpy arrays
+    question_embedding = np.array(
+        question_embedding
+    ).reshape(1, -1)
+
+    embeddings_array = np.array(
+        embeddings
+    )
+
+    # Compute similarity
     similarities = cosine_similarity(
 
-        query_embedding,
+        question_embedding,
 
-        chunk_embeddings
+        embeddings_array
     )[0]
 
-    top_indices = similarities.argsort()[
+    # Get top matching chunk
+    top_indices = similarities.argsort()[-3:][::-1]
 
-        -top_k:
+    results = []
 
-    ][::-1]
+    for idx in top_indices:
 
-    relevant_chunks = []
+        results.append({
 
-    for index in top_indices:
+            "chunk":
+            chunks[idx],
 
-        print(
-            "MATCH SCORE:",
-            similarities[index]
-        )
+            "metadata":
+            metadata[idx]
+        })
 
-        relevant_chunks.append(
-            chunks[index]
-        )
-
-    return relevant_chunks
+    return results
