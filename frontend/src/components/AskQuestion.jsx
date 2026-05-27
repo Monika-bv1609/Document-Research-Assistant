@@ -1,18 +1,30 @@
 import axios from "axios";
 
-import { useState } from "react";
+import {
+    useState
+} from "react";
 
 function AskQuestion() {
 
-    const [question, setQuestion] = useState("");
+    const [
+        question,
+        setQuestion
+    ] = useState("");
 
-    const [answer, setAnswer] = useState("");
+    const [
+        answer,
+        setAnswer
+    ] = useState("");
 
-    const [loading, setLoading] = useState(false);
+    const [
+        loading,
+        setLoading
+    ] = useState(false);
 
     const askQuestion = async () => {
 
         if (!question) {
+
             return;
         }
 
@@ -21,11 +33,17 @@ function AskQuestion() {
             setLoading(true);
 
             setAnswer(
-                "AI is analyzing document..."
+                "AI is analyzing documents..."
             );
 
-            const response = await axios.post(
-                `https://ai-research-assistant-z0mu.onrender.com/ask-pdf?question=${question}`
+            const response =
+                await axios.post(
+
+                    `https://ai-research-assistant-z0mu.onrender.com/ask-pdf?question=${question}`
+                );
+
+            console.log(
+                response.data
             );
 
             setAnswer(
@@ -34,9 +52,7 @@ function AskQuestion() {
 
         } catch (error) {
 
-            console.log(
-                error.response?.data
-            );
+            console.log(error);
 
             setAnswer(
                 "Question failed."
@@ -63,7 +79,7 @@ function AskQuestion() {
                 <input
                     type="text"
                     value={question}
-                    placeholder="Ask something about the PDF..."
+                    placeholder="Ask something about the PDFs..."
                     onChange={(e) =>
                         setQuestion(
                             e.target.value
