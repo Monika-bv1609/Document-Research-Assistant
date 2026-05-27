@@ -1,41 +1,32 @@
+from langchain_text_splitters import (
+    RecursiveCharacterTextSplitter
+)
+
+
 def chunk_text(
     text: str
 ):
 
-    chunks = []
+    text_splitter = (
+        RecursiveCharacterTextSplitter(
 
-    # Split by lines
-    lines = text.split("\n")
+            chunk_size=500,
 
-    current_chunk = ""
+            chunk_overlap=100,
 
-    for line in lines:
-
-        line = line.strip()
-
-        if not line:
-
-            continue
-
-        # Build meaningful chunk
-        current_chunk += (
-            line + "\n"
+            separators=[
+                "\n\n",
+                "\n",
+                ". ",
+                " "
+            ]
         )
+    )
 
-        # Save chunk after few lines
-        if len(current_chunk) > 200:
-
-            chunks.append(
-                current_chunk
-            )
-
-            current_chunk = ""
-
-    # Add remaining chunk
-    if current_chunk:
-
-        chunks.append(
-            current_chunk
+    chunks = (
+        text_splitter.split_text(
+            text
         )
+    )
 
     return chunks

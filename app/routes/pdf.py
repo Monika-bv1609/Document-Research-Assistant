@@ -1,8 +1,6 @@
-from fastapi import (
-    APIRouter,
-    UploadFile,
-    File
-)
+from typing import List
+
+from fastapi import APIRouter, UploadFile, File
 
 import shutil
 
@@ -31,54 +29,72 @@ DOCUMENT_CHUNKS = []
 DOCUMENT_EMBEDDINGS = []
 
 
-@router.post(
-    "/read-pdf"
-)
+@router.post("/read-pdf")
 async def read_pdf_file(
 
-    file: UploadFile = File(...)
+    files: List[UploadFile] = File(...)
 ):
 
     global DOCUMENT_CHUNKS
     global DOCUMENT_EMBEDDINGS
 
-    # Save uploaded PDF
-    file_path = (
-        f"temp_{file.filename}"
-    )
+    results = []
 
-    with open(
-        file_path,
-        "wb"
-    ) as buffer:
+    for file in files:
 
-        shutil.copyfileobj(
-            file.file,
-            buffer
+        # Save uploaded PDF
+        file_path = (
+            f"temp_{file.filename}"
         )
 
-    # Extract chunks
-    chunks = read_pdf(
-        file_path
-    )
+        with open(
+            file_path,
+            "wb"
+        ) as buffer:
 
-    # Store chunks
-    DOCUMENT_CHUNKS = chunks
+            shutil.copyfileobj(
+                file.file,
+                buffer
+            )
 
-    # Generate embeddings
-    DOCUMENT_EMBEDDINGS = (
-        generate_embeddings(
+        # Extract chunks
+        chunks = read_pdf(
+            file_path
+        )
+
+        # Append chunks instead of replacing
+        DOCUMENT_CHUNKS.extend(
             chunks
         )
-    )
+
+        # Generate embeddings
+        embeddings = (
+            generate_embeddings(
+                chunks
+            )
+        )
+
+        # Append embeddings instead of replacing
+        DOCUMENT_EMBEDDINGS.extend(
+            embeddings
+        )
+
+        results.append({
+
+            "filename":
+            file.filename,
+
+            "total_chunks":
+            len(chunks),
+
+            "message":
+            "PDF processed successfully"
+        })
 
     return {
 
-        "message":
-        "PDF processed successfully.",
-
-        "total_chunks":
-        len(chunks)
+        "uploaded_files":
+        results
     }
 
 
