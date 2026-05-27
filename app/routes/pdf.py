@@ -35,6 +35,9 @@ DOCUMENT_EMBEDDINGS = []
 # Store metadata
 DOCUMENT_METADATA = []
 
+# Chat memory
+CHAT_HISTORY = []
+
 
 @router.post(
     "/read-pdf"
@@ -135,6 +138,7 @@ async def ask_pdf(
     global DOCUMENT_CHUNKS
     global DOCUMENT_EMBEDDINGS
     global DOCUMENT_METADATA
+    global CHAT_HISTORY
 
     # Check if PDF uploaded
     if not DOCUMENT_CHUNKS:
@@ -157,9 +161,7 @@ async def ask_pdf(
         DOCUMENT_METADATA
     )
 
-    # Get top result
-    top_result = relevant_chunks[0]
-
+    # Merge top chunk contexts
     context = "\n\n".join(
 
         [
@@ -169,19 +171,57 @@ async def ask_pdf(
         ]
     )
 
+    # Source attribution
     source = (
         relevant_chunks[0]["metadata"]["filename"]
     )
 
-    # Generate final answer
+    # Build conversation memory
+    conversation_context = ""
+
+    for chat in CHAT_HISTORY:
+
+        conversation_context += (
+
+            f"User: {chat['question']}\n"
+
+            f"Assistant: {chat['answer']}\n\n"
+        )
+
+    # Combine memory + retrieved context
+    full_context = (
+
+        conversation_context
+
+        + "\n\n"
+
+        + context
+    )
+
+    # Generate AI answer
     final_answer = (
         generate_rag_answer(
 
             question,
 
-            context
+            full_context
         )
     )
+
+    # Store chat history
+    CHAT_HISTORY.append({
+
+        "question":
+        question,
+
+        "answer":
+        final_answer
+    })
+
+    # Keep only recent chats
+    if len(CHAT_HISTORY) > 5:
+
+        CHAT_HISTORY.pop(0)
 
     return {
 
