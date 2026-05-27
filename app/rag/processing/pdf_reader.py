@@ -27,16 +27,6 @@ def read_pdf(
                 page.extract_text()
             )
 
-            # Remove weird spacing between characters
-            page_text = re.sub(
-
-                r'(?<=\w)\s(?=\w)',
-
-                '',
-
-                page_text
-            )
-
             # Normalize spaces
             page_text = " ".join(
                 page_text.split()
