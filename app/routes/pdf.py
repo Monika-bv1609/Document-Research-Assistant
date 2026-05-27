@@ -1,6 +1,10 @@
 from typing import List
 
-from fastapi import APIRouter, UploadFile, File
+from fastapi import (
+    APIRouter,
+    UploadFile,
+    File
+)
 
 import shutil
 
@@ -28,8 +32,13 @@ DOCUMENT_CHUNKS = []
 # Store embeddings
 DOCUMENT_EMBEDDINGS = []
 
+# Store metadata
+DOCUMENT_METADATA = []
 
-@router.post("/read-pdf")
+
+@router.post(
+    "/read-pdf"
+)
 async def read_pdf_file(
 
     files: List[UploadFile] = File(...)
@@ -37,6 +46,7 @@ async def read_pdf_file(
 
     global DOCUMENT_CHUNKS
     global DOCUMENT_EMBEDDINGS
+    global DOCUMENT_METADATA
 
     results = []
 
@@ -62,9 +72,25 @@ async def read_pdf_file(
             file_path
         )
 
-        # Append chunks instead of replacing
+        # Create metadata
+        metadata = []
+
+        for chunk in chunks:
+
+            metadata.append({
+
+                "filename":
+                file.filename
+            })
+
+        # Store chunks
         DOCUMENT_CHUNKS.extend(
             chunks
+        )
+
+        # Store metadata
+        DOCUMENT_METADATA.extend(
+            metadata
         )
 
         # Generate embeddings
@@ -74,7 +100,7 @@ async def read_pdf_file(
             )
         )
 
-        # Append embeddings instead of replacing
+        # Store embeddings
         DOCUMENT_EMBEDDINGS.extend(
             embeddings
         )
@@ -108,6 +134,7 @@ async def ask_pdf(
 
     global DOCUMENT_CHUNKS
     global DOCUMENT_EMBEDDINGS
+    global DOCUMENT_METADATA
 
     # Check if PDF uploaded
     if not DOCUMENT_CHUNKS:
@@ -115,20 +142,35 @@ async def ask_pdf(
         return {
 
             "answer":
-            "Please upload a PDF first."
+            "Please upload PDFs first."
         }
 
-    # Retrieve multiple relevant chunks
+    # Retrieve relevant chunks
     relevant_chunks = semantic_search(
 
         question,
+
         DOCUMENT_CHUNKS,
-        DOCUMENT_EMBEDDINGS
+
+        DOCUMENT_EMBEDDINGS,
+
+        DOCUMENT_METADATA
     )
 
-    # Combine chunks into one context
-    combined_context = "\n\n".join(
-        relevant_chunks
+    # Get top result
+    top_result = relevant_chunks[0]
+
+    context = "\n\n".join(
+
+        [
+            result["chunk"]
+
+            for result in relevant_chunks
+        ]
+    )
+
+    source = (
+        relevant_chunks[0]["metadata"]["filename"]
     )
 
     # Generate final answer
@@ -136,7 +178,8 @@ async def ask_pdf(
         generate_rag_answer(
 
             question,
-            combined_context
+
+            context
         )
     )
 
@@ -146,5 +189,8 @@ async def ask_pdf(
         question,
 
         "answer":
-        final_answer
+        final_answer,
+
+        "source":
+        source
     }
