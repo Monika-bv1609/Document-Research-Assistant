@@ -1,21 +1,14 @@
 import requests
-
 import os
 
-from dotenv import (
-    load_dotenv
-)
+from dotenv import load_dotenv
 
 load_dotenv()
 
 
-def generate_embeddings(
-    chunks: list
-):
+def generate_embeddings(chunks: list):
 
-    url = (
-        "https://api.jina.ai/v1/embeddings"
-    )
+    url = "https://api.jina.ai/v1/embeddings"
 
     headers = {
 
@@ -44,8 +37,13 @@ def generate_embeddings(
         json=data
     )
 
+    if response.status_code != 200:
+
+        raise Exception(
+            f"Embedding API Error: {response.text}"
+        )
+
     result = response.json()
-    
 
     embeddings = [
 

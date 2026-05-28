@@ -1,63 +1,45 @@
-from sklearn.metrics.pairwise import (
-    cosine_similarity
-)
-
-import numpy as np
-
 from app.rag.retrieval.embedding_generator import (
     generate_embeddings
 )
 
+from app.rag.vectorstore.vector_store import (
+    VectorStore
+)
 
-def semantic_search(
 
-    question,
+def semantic_search(question):
 
-    chunks,
-
-    embeddings,
-
-    metadata
-):
-
-    # Generate embedding for question
-    question_embedding = (
-        generate_embeddings(
-            [question]
-        )[0]
-    )
-
-    # Convert to numpy arrays
-    question_embedding = np.array(
-        question_embedding
-    ).reshape(1, -1)
-
-    embeddings_array = np.array(
-        embeddings
-    )
-
-    # Compute similarity
-    similarities = cosine_similarity(
-
-        question_embedding,
-
-        embeddings_array
+    # Generate question embedding
+    question_embedding = generate_embeddings(
+        [question]
     )[0]
 
-    # Get top matching chunk
-    top_indices = similarities.argsort()[-3:][::-1]
+    # Search in ChromaDB
+    results = VectorStore.search(
 
-    results = []
+        query_embedding=question_embedding,
 
-    for idx in top_indices:
+        top_k=3
+    )
 
-        results.append({
+    documents = results["documents"][0]
 
-            "chunk":
-            chunks[idx],
+    metadatas = results["metadatas"][0]
 
-            "metadata":
-            metadata[idx]
+    final_results = []
+
+    for doc, metadata in zip(
+
+        documents,
+
+        metadatas
+    ):
+
+        final_results.append({
+
+            "chunk": doc,
+
+            "metadata": metadata
         })
 
-    return results
+    return final_results
