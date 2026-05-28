@@ -72,8 +72,22 @@ async def read_pdf_file(
 
         # Extract chunks
         chunks = read_pdf(
-            file_path
+            file_path,
+            file.filename
         )
+
+        if not chunks:
+
+            results.append({
+
+                "filename":
+                file.filename,
+
+                "message":
+                "Document already exists."
+            })
+
+            continue
 
         # Create metadata
         metadata = []
@@ -97,16 +111,16 @@ async def read_pdf_file(
         )
 
         # Generate embeddings
-        embeddings = (
-            generate_embeddings(
-                chunks
-            )
-        )
+        # embeddings = (
+        #     generate_embeddings(
+        #         chunks
+        #     )
+        # )
 
-        # Store embeddings
-        DOCUMENT_EMBEDDINGS.extend(
-            embeddings
-        )
+        # # Store embeddings
+        # DOCUMENT_EMBEDDINGS.extend(
+        #     embeddings
+        # )
 
         results.append({
 
@@ -140,25 +154,11 @@ async def ask_pdf(
     global DOCUMENT_METADATA
     global CHAT_HISTORY
 
-    # Check if PDF uploaded
-    if not DOCUMENT_CHUNKS:
 
-        return {
-
-            "answer":
-            "Please upload PDFs first."
-        }
 
     # Retrieve relevant chunks
     relevant_chunks = semantic_search(
-
-        question,
-
-        DOCUMENT_CHUNKS,
-
-        DOCUMENT_EMBEDDINGS,
-
-        DOCUMENT_METADATA
+        question
     )
 
     # Merge top chunk contexts
@@ -173,7 +173,7 @@ async def ask_pdf(
 
     # Source attribution
     source = (
-        relevant_chunks[0]["metadata"]["filename"]
+        relevant_chunks[0]["metadata"]["source"]
     )
 
     # Build conversation memory

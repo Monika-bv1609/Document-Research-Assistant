@@ -1,26 +1,37 @@
 import axios from "axios";
 
 import {
+
     useState
+
 } from "react";
+
 
 function PdfUpload() {
 
     const [
+
         loading,
+
         setLoading
+
     ] = useState(false);
 
     const [
+
         message,
+
         setMessage
+
     ] = useState("");
 
     const uploadPdf = async (
+
         event
     ) => {
 
         const files =
+
             event.target.files;
 
         if (!files.length) {
@@ -29,16 +40,22 @@ function PdfUpload() {
         }
 
         const formData =
+
             new FormData();
 
         for (
+
             let i = 0;
+
             i < files.length;
+
             i++
         ) {
 
             formData.append(
+
                 "files",
+
                 files[i]
             );
         }
@@ -48,13 +65,15 @@ function PdfUpload() {
             setLoading(true);
 
             setMessage(
-                "Processing PDFs..."
+                "Uploading PDFs..."
             );
 
             const response =
+
                 await axios.post(
 
-                    "https://ai-research-assistant-z0mu.onrender.com/read-pdf",
+                    "http://127.0.0.1:8000/read-pdf",
+                    // "https://ai-research-assistant-z0mu.onrender.com/read-pdf",
 
                     formData,
 
@@ -90,30 +109,45 @@ function PdfUpload() {
 
     return (
 
-        <div className="mb-10">
+        <div className="p-6 border-b border-gray-800 bg-black">
 
-            <h2 className="text-2xl font-semibold text-white mb-4">
-
-                Upload PDFs
-
-            </h2>
-
-            <input
-                type="file"
-                multiple
-                onChange={uploadPdf}
-                className="w-full bg-white/10 text-white border border-gray-600 rounded-xl p-4 cursor-pointer"
-            />
-
-            <p className="text-gray-300 mt-4">
+            <label
+                className="block w-full cursor-pointer bg-white/10 hover:bg-white/20 border border-gray-700 text-white rounded-2xl p-6 text-center transition-all"
+            >
 
                 {
+
                     loading
-                    ? "Processing PDFs..."
-                    : message
+
+                    ?
+
+                    "Uploading..."
+
+                    :
+
+                    "Upload HR PDFs"
                 }
 
-            </p>
+                <input
+                    type="file"
+                    multiple
+                    onChange={uploadPdf}
+                    className="hidden"
+                />
+
+            </label>
+
+            {
+
+                message && (
+
+                    <p className="text-gray-400 mt-4">
+
+                        {message}
+
+                    </p>
+                )
+            }
 
         </div>
     );
