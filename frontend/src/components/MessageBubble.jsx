@@ -1,28 +1,20 @@
-function MessageBubble({
-
-    message
-
-}) {
-
-    const isUser =
-
-        message.role === "user";
+function MessageBubble({ message }) {
 
     return (
 
         <div
             className={`flex ${
-                isUser
+                message.role === "user"
                 ? "justify-end"
                 : "justify-start"
             }`}
         >
 
             <div
-                className={`max-w-3xl px-6 py-4 rounded-3xl shadow-lg ${
-                    isUser
+                className={`max-w-2xl px-6 py-5 rounded-3xl ${
+                    message.role === "user"
                     ? "bg-gradient-to-r from-purple-500 to-blue-500 text-white"
-                    : "bg-white/10 border border-gray-700 text-gray-200"
+                    : "bg-white/10 border border-white/10 text-white"
                 }`}
             >
 
@@ -33,14 +25,11 @@ function MessageBubble({
                 </p>
 
                 {
+                    message.source && (
 
-                    !isUser && message.source && (
+                        <p className="text-sm text-gray-400 mt-6">
 
-                        <p className="text-sm text-gray-400 mt-4">
-
-                            Source:
-                            {" "}
-                            {message.source}
+                            Source: {message.source}
 
                         </p>
                     )

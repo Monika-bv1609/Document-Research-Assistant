@@ -1,96 +1,185 @@
-import {
+import axios from "axios";
 
-    useState
-
-} from "react";
-
+import { useState } from "react";
 
 function ChatInput({
 
-    onSend,
+    setMessages,
 
-    loading
+    fileInputRef,
 
+    setUploadedFiles
 }) {
 
-    const [
+    const [input, setInput] = useState("");
 
-        question,
+    const handleSend = async () => {
 
-        setQuestion
-
-    ] = useState("");
-
-    const handleSend = () => {
-
-        if (!question.trim()) {
+        if (!input.trim()) {
 
             return;
         }
 
-        onSend(question);
+        const userMessage = {
 
-        setQuestion("");
+            role: "user",
+
+            content: input
+        };
+
+        setMessages((prev) => [
+
+            ...prev,
+
+            userMessage
+        ]);
+
+        const question = input;
+
+        setInput("");
+
+        try {
+
+            const response = await axios.post(
+
+                "http://127.0.0.1:8000/ask-pdf",
+
+                {},
+
+                {
+                    params: {
+                        question
+                    }
+                }
+            );
+
+            const aiMessage = {
+
+                role: "assistant",
+
+                content:
+                response.data.answer,
+
+                source:
+                response.data.source
+            };
+
+            setMessages((prev) => [
+
+                ...prev,
+
+                aiMessage
+            ]);
+
+        } catch (error) {
+
+            console.log(error);
+        }
     };
 
-    const handleKeyDown = (e) => {
+    const handleFileUpload = async (event) => {
 
-        if (
+        const files = event.target.files;
 
-            e.key === "Enter"
+        if (!files.length) {
 
-            &&
+            return;
+        }
 
-            !e.shiftKey
-        ) {
+        const formData = new FormData();
 
-            e.preventDefault();
+        for (let file of files) {
 
-            handleSend();
+            formData.append(
+                "files",
+                file
+            );
+        }
+
+        try {
+
+            const response = await axios.post(
+
+                "http://127.0.0.1:8000/read-pdf",
+
+                formData
+            );
+
+            const uploaded = response.data.uploaded_files;
+
+            const fileNames = uploaded.map(
+
+                (file) => file.filename
+            );
+
+            setUploadedFiles(fileNames);
+
+            setMessages((prev) => [
+
+                ...prev,
+
+                {
+                    role: "assistant",
+
+                    content:
+                    "PDFs uploaded successfully."
+                }
+            ]);
+
+        } catch (error) {
+
+            console.log(error);
         }
     };
 
     return (
 
-        <div className="p-6 border-t border-gray-800 bg-black">
+        <div className="p-6 border-t border-white/10 flex gap-4 items-center">
 
-            <div className="flex gap-4">
+            <input
+                type="file"
+                multiple
+                hidden
+                ref={fileInputRef}
+                onChange={handleFileUpload}
+            />
 
-                <textarea
-                    rows={1}
-                    value={question}
-                    onChange={(e) =>
-                        setQuestion(
-                            e.target.value
-                        )
+            <button
+                onClick={() =>
+                    fileInputRef.current.click()
+                }
+                className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 text-white text-3xl flex items-center justify-center hover:bg-white/10 transition-all"
+            >
+
+                +
+
+            </button>
+
+            <input
+                type="text"
+                value={input}
+                placeholder="Ask something..."
+                onChange={(e) =>
+                    setInput(e.target.value)
+                }
+                onKeyDown={(e) => {
+
+                    if (e.key === "Enter") {
+
+                        handleSend();
                     }
-                    onKeyDown={handleKeyDown}
-                    placeholder="Ask something..."
-                    className="flex-1 bg-white/10 border border-gray-700 text-white rounded-2xl p-4 outline-none resize-none"
-                />
+                }}
+                className="flex-1 h-14 bg-white/5 border border-white/10 rounded-2xl px-6 text-white outline-none"
+            />
 
-                <button
-                    onClick={handleSend}
-                    disabled={loading}
-                    className="bg-gradient-to-r from-purple-500 to-blue-500 text-white px-8 rounded-2xl font-semibold hover:scale-105 transition-all duration-300 disabled:opacity-50"
-                >
+            <button
+                onClick={handleSend}
+                className="px-10 h-14 rounded-2xl bg-gradient-to-r from-purple-500 to-blue-500 text-white font-semibold"
+            >
 
-                    {
+                Send
 
-                        loading
-
-                        ?
-
-                        "Thinking..."
-
-                        :
-
-                        "Send"
-                    }
-
-                </button>
-
-            </div>
+            </button>
 
         </div>
     );
