@@ -42,7 +42,7 @@ function ChatInput({
 
             const response = await axios.post(
 
-                "http://127.0.0.1:8000/ask-pdf",
+                "https://ai-research-assistant-z0mu.onrender.com/ask-pdf",
 
                 {},
 
@@ -100,7 +100,7 @@ function ChatInput({
 
             const response = await axios.post(
 
-                "http://127.0.0.1:8000/read-pdf",
+                "https://ai-research-assistant-z0mu.onrender.com/read-pdf",
 
                 formData
             );
