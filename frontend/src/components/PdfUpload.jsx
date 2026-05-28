@@ -1,153 +1,83 @@
 import axios from "axios";
 
-import {
+function PdfUpload({
 
-    useState
+    setUploadedFiles,
 
-} from "react";
+    setMessages
+}) {
 
+    const uploadPdf = async (event) => {
 
-function PdfUpload() {
-
-    const [
-
-        loading,
-
-        setLoading
-
-    ] = useState(false);
-
-    const [
-
-        message,
-
-        setMessage
-
-    ] = useState("");
-
-    const uploadPdf = async (
-
-        event
-    ) => {
-
-        const files =
-
-            event.target.files;
+        const files = event.target.files;
 
         if (!files.length) {
 
             return;
         }
 
-        const formData =
+        const formData = new FormData();
 
-            new FormData();
-
-        for (
-
-            let i = 0;
-
-            i < files.length;
-
-            i++
-        ) {
+        for (let file of files) {
 
             formData.append(
-
                 "files",
-
-                files[i]
+                file
             );
         }
 
         try {
 
-            setLoading(true);
+            const response = await axios.post(
 
-            setMessage(
-                "Uploading PDFs..."
+                "https://ai-research-assistant-z0mu.onrender.com/read-pdf",
+
+                formData
             );
 
-            const response =
+            const uploaded = response.data.uploaded_files;
 
-                await axios.post(
+            const fileNames = uploaded.map(
 
-                    "http://127.0.0.1:8000/read-pdf",
-                    // "https://ai-research-assistant-z0mu.onrender.com/read-pdf",
-
-                    formData,
-
-                    {
-                        headers: {
-                            "Content-Type":
-                            "multipart/form-data",
-                        },
-                    }
-                );
-
-            console.log(
-                response.data
+                (file) => file.filename
             );
 
-            setMessage(
-                "PDFs uploaded successfully."
-            );
+            setUploadedFiles(fileNames);
 
-            setLoading(false);
+            setMessages((prev) => [
+
+                ...prev,
+
+                {
+                    role: "assistant",
+
+                    content:
+                    "PDFs uploaded successfully."
+                }
+            ]);
 
         } catch (error) {
 
             console.log(error);
-
-            setMessage(
-                "PDF upload failed."
-            );
-
-            setLoading(false);
         }
     };
 
     return (
 
-        <div className="p-6 border-b border-gray-800 bg-black">
+        <div className="p-4 border-b border-white/10">
 
-            <label
-                className="block w-full cursor-pointer bg-white/10 hover:bg-white/20 border border-gray-700 text-white rounded-2xl p-6 text-center transition-all"
-            >
+            <label className="flex items-center justify-center h-20 rounded-2xl border border-white/10 bg-white/5 text-white text-xl cursor-pointer hover:bg-white/10 transition-all">
 
-                {
-
-                    loading
-
-                    ?
-
-                    "Uploading..."
-
-                    :
-
-                    "Upload HR PDFs"
-                }
+                Upload HR PDFs
 
                 <input
                     type="file"
                     multiple
+                    hidden
                     onChange={uploadPdf}
-                    className="hidden"
                 />
 
             </label>
-
-            {
-
-                message && (
-
-                    <p className="text-gray-400 mt-4">
-
-                        {message}
-
-                    </p>
-                )
-            }
 
         </div>
     );

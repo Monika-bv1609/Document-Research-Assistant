@@ -9,17 +9,17 @@ from app.rag.vectorstore.vector_store import (
 
 def semantic_search(question):
 
-    # Generate question embedding
+    # Generate embedding
     question_embedding = generate_embeddings(
         [question]
     )[0]
 
-    # Search in ChromaDB
+    # Search more chunks
     results = VectorStore.search(
 
         query_embedding=question_embedding,
 
-        top_k=3
+        top_k=6
     )
 
     documents = results["documents"][0]
@@ -28,12 +28,23 @@ def semantic_search(question):
 
     final_results = []
 
+    seen_sources = set()
+
     for doc, metadata in zip(
 
         documents,
 
         metadatas
     ):
+
+        source = metadata["source"]
+
+        # Avoid duplicate chunks from same PDF
+        if source in seen_sources:
+
+            continue
+
+        seen_sources.add(source)
 
         final_results.append({
 
