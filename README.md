@@ -1,4 +1,4 @@
-# AI Research Assistant
+# Document-Research-Assistant
 
 ## Overview
 
