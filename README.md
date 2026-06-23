@@ -155,6 +155,32 @@ ai-research-assistant/
 * Knowledge graph integration
 * Multi-agent research assistant
 
+LangSmith Observability & Evaluation
+
+Implemented LangSmith for monitoring, debugging, and evaluating the AI system.
+
+Features
+Prompt Versioning
+Dataset Creation
+Experiment Tracking
+Tool Router Evaluation
+LLM-as-a-Judge Evaluation
+RAG Evaluation
+Groundedness Analysis
+Retrieval Relevance Analysis
+Correctness Evaluation
+Tracing & Debugging
+Evaluation Results
+
+Metric	Score
+Correctness	100%
+Groundedness	100%
+Retrieval Relevance	50%
+
+
+<img width="1892" height="855" alt="image" src="https://github.com/user-attachments/assets/2a93d565-a1f9-4a08-b086-6d417340b253" />
+
+
 ---
 
 ## Author
