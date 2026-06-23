@@ -5,8 +5,9 @@ from app.rag.retrieval.embedding_generator import (
 from app.rag.vectorstore.vector_store import (
     VectorStore
 )
+from langsmith import traceable
 
-
+@traceable(name="semantic_search")
 def semantic_search(question):
 
     # Generate embedding

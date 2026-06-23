@@ -224,13 +224,9 @@ async def ask_pdf(
         CHAT_HISTORY.pop(0)
 
     return {
-
-        "question":
-        question,
-
-        "answer":
-        final_answer,
-
-        "source":
-        source
+        "question": question,
+        "answer": final_answer,
+        "source": source,
+        "retrieved_chunks": relevant_chunks,
+        "context": full_context
     }
