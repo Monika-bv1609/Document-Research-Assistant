@@ -17,7 +17,9 @@ def read_pdf(
 
     file_path: str,
 
-    filename: str
+    filename: str,
+    
+    policy_type: str
 ):
 
     try:
@@ -63,7 +65,9 @@ def read_pdf(
 
                 "source": filename,
 
-                "chunk_index": index
+                "chunk_index": index,
+
+                "policy_type": policy_type
             })
 
         # Create unique IDs
@@ -73,6 +77,13 @@ def read_pdf(
 
             for i in range(len(chunks))
         ]
+
+        print("========== METADATA ==========")
+
+        for item in metadata_list[:5]:
+            print(item)
+
+        print("==============================")
 
         # Store in ChromaDB
         VectorStore.add_documents(
