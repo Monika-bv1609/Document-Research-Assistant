@@ -8,19 +8,25 @@ from app.rag.vectorstore.vector_store import (
 from langsmith import traceable
 
 @traceable(name="semantic_search")
-def semantic_search(question):
+def semantic_search(question,policy_type=None):
 
+    print("DEBUG START")
+
+    VectorStore.debug_metadata()
+    
     # Generate embedding
     question_embedding = generate_embeddings(
         [question]
     )[0]
 
+    print(f"[VECTOR SEARCH] policy_type={policy_type}")
     # Search more chunks
     results = VectorStore.search(
 
         query_embedding=question_embedding,
 
-        top_k=6
+        top_k=6,
+        policy_type=policy_type
     )
 
     documents = results["documents"][0]
@@ -53,5 +59,14 @@ def semantic_search(question):
 
             "metadata": metadata
         })
+
+
+    print("Policy Type:", policy_type)
+    print("Retrieved Sources:")
+    for result in final_results:
+
+        print(
+            result["metadata"]
+        )
 
     return final_results

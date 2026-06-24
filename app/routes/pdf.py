@@ -1,5 +1,5 @@
 from typing import List
-
+from fastapi import Form
 from fastapi import (
     APIRouter,
     UploadFile,
@@ -44,8 +44,15 @@ CHAT_HISTORY = []
 )
 async def read_pdf_file(
 
-    files: List[UploadFile] = File(...)
+    files: List[UploadFile] = File(...),
+    policy_type: str = Form(...)
 ):
+    
+    print(" 111111111 READ PDF API HIT")
+
+    print(
+        f"22222222 [READ PDF] policy_type={policy_type}"
+    )
 
     global DOCUMENT_CHUNKS
     global DOCUMENT_EMBEDDINGS
@@ -71,9 +78,18 @@ async def read_pdf_file(
             )
 
         # Extract chunks
+        print(
+            f"[READ PDF] filename={file.filename}"
+        )
+
+        print(
+            f"[READ PDF] policy_type={policy_type}"
+        )
+
         chunks = read_pdf(
             file_path,
-            file.filename
+            file.filename,
+            policy_type
         )
 
         if not chunks:
@@ -146,8 +162,11 @@ async def read_pdf_file(
 )
 async def ask_pdf(
 
-    question: str
+    question,
+    policy_type
+    
 ):
+    print(f"[ASK PDF] policy_type={policy_type}")
 
     global DOCUMENT_CHUNKS
     global DOCUMENT_EMBEDDINGS
@@ -158,7 +177,8 @@ async def ask_pdf(
 
     # Retrieve relevant chunks
     relevant_chunks = semantic_search(
-        question
+        question,
+        policy_type=policy_type
     )
 
     # Merge top chunk contexts
@@ -170,6 +190,14 @@ async def ask_pdf(
             for result in relevant_chunks
         ]
     )
+
+    if not relevant_chunks:
+
+        return {
+            "question": question,
+            "answer": f"No documents found for policy type: {policy_type}",
+            "retrieved_chunks": []
+        }
 
     # Source attribution
     source = (
@@ -229,4 +257,24 @@ async def ask_pdf(
         "source": source,
         "retrieved_chunks": relevant_chunks,
         "context": full_context
+    }
+
+
+@router.delete("/delete-pdf")
+async def delete_pdf(filename: str):
+
+    from app.rag.vectorstore.chroma_client import collection
+
+    collection.delete(
+        where={
+            "source": filename
+        }
+    )
+
+    print(
+        f"[DELETE PDF] filename={filename}"
+    )
+    
+    return {
+        "message": f"{filename} deleted"
     }
