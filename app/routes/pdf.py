@@ -258,3 +258,23 @@ async def ask_pdf(
         "retrieved_chunks": relevant_chunks,
         "context": full_context
     }
+
+
+@router.delete("/delete-pdf")
+async def delete_pdf(filename: str):
+
+    from app.rag.vectorstore.chroma_client import collection
+
+    collection.delete(
+        where={
+            "source": filename
+        }
+    )
+
+    print(
+        f"[DELETE PDF] filename={filename}"
+    )
+    
+    return {
+        "message": f"{filename} deleted"
+    }
