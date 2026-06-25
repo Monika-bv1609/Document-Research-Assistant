@@ -30,6 +30,8 @@ def rerank_chunks(question, chunks, top_n=3):
         "top_n": top_n
     }
 
+    print("Chunks received by reranker:", len(chunks))
+
     response = requests.post(
         url,
         headers=headers,
@@ -43,6 +45,30 @@ def rerank_chunks(question, chunks, top_n=3):
 
     results = response.json()["results"]
 
+    print("Results returned by Jina:", len(results))
+
     reranked_chunks = []
+
+    print("\n========== RERANKING ==========")
+
+    for result in results:
+
+        index = result["index"]
+
+        score = result["relevance_score"]
+
+        print(
+            f"Score={score:.4f} | "
+            f"Source={chunks[index]['metadata']['source']} | "
+            f"Chunk={chunks[index]['metadata']['chunk_index']}"
+        )
+
+        reranked_chunks.append(
+            chunks[index]
+        )
+
+    print("===============================\n")
+
+    print("Chunks after reranking:", len(reranked_chunks))
 
     return reranked_chunks
