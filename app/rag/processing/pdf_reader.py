@@ -51,6 +51,8 @@ def read_pdf(
         # Create chunks
         chunks = chunk_text(text)
 
+        print(f"00000000000 TOTAL CHUNKS CREATED = {len(chunks)}")
+
         # Generate embeddings
         embeddings = generate_embeddings(
             chunks
@@ -78,12 +80,6 @@ def read_pdf(
             for i in range(len(chunks))
         ]
 
-        print("========== METADATA ==========")
-
-        for item in metadata_list[:5]:
-            print(item)
-
-        print("==============================")
 
         # Store in ChromaDB
         VectorStore.add_documents(
@@ -96,6 +92,15 @@ def read_pdf(
 
             ids=ids
         )
+
+        results = collection.get(
+            where={"policy_type": policy_type}
+        )
+
+        print("TOTAL STORED:", len(results["ids"]))
+
+        for metadata in results["metadatas"][:5]:
+            print(metadata)
 
         return chunks
 

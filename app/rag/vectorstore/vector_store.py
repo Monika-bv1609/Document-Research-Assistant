@@ -36,9 +36,7 @@ class VectorStore:
         policy_type=None
     ):
 
-        print(
-            f"[CHROMA FILTER] policy_type={policy_type}"
-        )
+
         results = collection.query(
 
             query_embeddings=[query_embedding],
@@ -64,19 +62,22 @@ class VectorStore:
                 n_results=top_k
             )
 
+
+        print("=================================")
+        print("Documents Returned:", len(results["documents"][0]))
+        print("IDs Returned:", len(results["ids"][0]))
+        print("Metadata Returned:", len(results["metadatas"][0]))
+
+        for metadata in results["metadatas"][0]:
+            print(metadata)
+
+        print("=================================")
         return results
 
     @staticmethod
     def document_exists(filename):
 
         results = collection.get()
-
-        print("========== STORED METADATA ==========")
-
-        for item in results["metadatas"][:5]:
-            print(item)
-
-        print("====================================")
 
         metadatas = results.get(
             "metadatas",
@@ -91,17 +92,3 @@ class VectorStore:
 
         return False
     
-
-
-    @staticmethod
-    def debug_metadata():
-
-        results = collection.get()
-
-        print("\n========== CHROMA METADATA ==========")
-
-        for metadata in results["metadatas"][:20]:
-
-            print(metadata)
-
-        print("====================================\n")

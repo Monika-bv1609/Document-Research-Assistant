@@ -24,6 +24,10 @@ from app.rag.generation.rag_answer_generator import (
     generate_rag_answer
 )
 
+from app.rag.retrieval.reranker import (
+    rerank_chunks
+)
+
 router = APIRouter()
 
 # Store document chunks
@@ -48,11 +52,6 @@ async def read_pdf_file(
     policy_type: str = Form(...)
 ):
     
-    print(" 111111111 READ PDF API HIT")
-
-    print(
-        f"22222222 [READ PDF] policy_type={policy_type}"
-    )
 
     global DOCUMENT_CHUNKS
     global DOCUMENT_EMBEDDINGS
@@ -77,14 +76,6 @@ async def read_pdf_file(
                 buffer
             )
 
-        # Extract chunks
-        print(
-            f"[READ PDF] filename={file.filename}"
-        )
-
-        print(
-            f"[READ PDF] policy_type={policy_type}"
-        )
 
         chunks = read_pdf(
             file_path,
@@ -126,17 +117,6 @@ async def read_pdf_file(
             metadata
         )
 
-        # Generate embeddings
-        # embeddings = (
-        #     generate_embeddings(
-        #         chunks
-        #     )
-        # )
-
-        # # Store embeddings
-        # DOCUMENT_EMBEDDINGS.extend(
-        #     embeddings
-        # )
 
         results.append({
 
@@ -179,6 +159,13 @@ async def ask_pdf(
     relevant_chunks = semantic_search(
         question,
         policy_type=policy_type
+    )
+
+    # Rerank chunks
+    relevant_chunks = rerank_chunks(
+        question,
+        relevant_chunks,
+        top_n=3
     )
 
     # Merge top chunk contexts
