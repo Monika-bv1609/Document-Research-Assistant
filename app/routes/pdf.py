@@ -28,6 +28,10 @@ from app.rag.retrieval.reranker import (
     rerank_chunks
 )
 
+from app.rag.retrieval.bm25_search import bm25_search
+
+from app.rag.retrieval.hybrid_search import hybrid_search
+
 router = APIRouter()
 
 # Store document chunks
@@ -146,7 +150,7 @@ async def ask_pdf(
     policy_type
     
 ):
-    print(f"[ASK PDF] policy_type={policy_type}")
+
 
     global DOCUMENT_CHUNKS
     global DOCUMENT_EMBEDDINGS
@@ -156,9 +160,9 @@ async def ask_pdf(
 
 
     # Retrieve relevant chunks
-    relevant_chunks = semantic_search(
+    relevant_chunks = hybrid_search(
         question,
-        policy_type=policy_type
+        policy_type=policy_type,
     )
 
     # Rerank chunks
@@ -258,9 +262,6 @@ async def delete_pdf(filename: str):
         }
     )
 
-    print(
-        f"[DELETE PDF] filename={filename}"
-    )
     
     return {
         "message": f"{filename} deleted"

@@ -61,7 +61,6 @@ class VectorStore:
                 query_embeddings=[query_embedding],
                 n_results=top_k
             )
-
         return results
 
     @staticmethod
