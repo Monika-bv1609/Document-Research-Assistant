@@ -24,7 +24,7 @@ def choose_tool(
     try:
 
         # Debug API key
-        print("API KEY:", API_KEY)
+
 
         # Router prompt
         router_prompt = f"""
@@ -91,24 +91,15 @@ def choose_tool(
             }
         )
 
-        # Debug response status
-        print("STATUS CODE:", response.status_code)
+
 
         # Convert to JSON
         data = response.json()
 
-        print("RESPONSE:", data)
 
         # Check for errors
         if "choices" not in data:
 
-            print(
-                "LLM routing failed."
-            )
-
-            print(
-                "Falling back to keyword router."
-            )
 
             # Fallback routing
             question_lower = question.lower()
@@ -151,10 +142,6 @@ def choose_tool(
             "message"
         ]["content"].strip()
 
-        print(
-            "LLM Selected Tool:",
-            tool
-        )
 
         return tool
 

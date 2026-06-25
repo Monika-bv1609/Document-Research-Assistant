@@ -9,16 +9,10 @@ def research_ai_topic(
 
     try:
 
-        print(
-            "STEP 1: Searching web..."
-        )
 
         # Search internet
         results = search_web(query)
 
-        print(
-            "STEP 2: Results collected"
-        )
 
         # Extract titles
         titles = []
@@ -57,9 +51,6 @@ continuous advancements in AI tools,
 research, and enterprise adoption.
 """
 
-        print(
-            "STEP 3: Summary generated"
-        )
 
         return summary
 

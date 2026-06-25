@@ -41,10 +41,5 @@ def semantic_search(question, policy_type=None):
             "metadata": metadata
         })
 
-    print(f"\n[VECTOR SEARCH] Retrieved {len(final_results)} chunks")
-
-    for result in final_results:
-
-        print(result["metadata"])
 
     return final_results

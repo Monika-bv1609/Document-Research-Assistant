@@ -62,16 +62,6 @@ class VectorStore:
                 n_results=top_k
             )
 
-
-        print("=================================")
-        print("Documents Returned:", len(results["documents"][0]))
-        print("IDs Returned:", len(results["ids"][0]))
-        print("Metadata Returned:", len(results["metadatas"][0]))
-
-        for metadata in results["metadatas"][0]:
-            print(metadata)
-
-        print("=================================")
         return results
 
     @staticmethod

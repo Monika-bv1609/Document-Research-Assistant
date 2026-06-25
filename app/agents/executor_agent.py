@@ -12,10 +12,6 @@ def execute_plan(
 
     for step in plan:
 
-        print(
-            f"EXECUTING STEP: {step}"
-        )
-
         # Web search step
         if step == "web_search":
 

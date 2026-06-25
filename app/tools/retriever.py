@@ -33,7 +33,6 @@ def retrieve_relevant_chunks(
         if word not in stop_words
     ]
 
-    print("QUERY WORDS:", query_words)
 
     # Search chunks
     for chunk in chunks:
@@ -55,7 +54,6 @@ def retrieve_relevant_chunks(
 
             best_chunk = chunk
 
-    print("BEST SCORE:", best_score)
 
     # Return best match
     if best_score > 0:

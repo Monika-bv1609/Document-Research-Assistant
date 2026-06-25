@@ -51,7 +51,6 @@ def read_pdf(
         # Create chunks
         chunks = chunk_text(text)
 
-        print(f"00000000000 TOTAL CHUNKS CREATED = {len(chunks)}")
 
         # Generate embeddings
         embeddings = generate_embeddings(
@@ -96,11 +95,6 @@ def read_pdf(
         results = collection.get(
             where={"policy_type": policy_type}
         )
-
-        print("TOTAL STORED:", len(results["ids"]))
-
-        for metadata in results["metadatas"][:5]:
-            print(metadata)
 
         return chunks
 

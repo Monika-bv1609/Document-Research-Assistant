@@ -19,8 +19,7 @@ def search_web(
                 )
             )
 
-            # Debugging
-            print(search_results)
+
 
             for result in search_results:
 
