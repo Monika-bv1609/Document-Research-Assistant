@@ -16,10 +16,6 @@ def create_execution_plan(
         question
     )
 
-    print(
-        "AI SELECTED TOOL:",
-        tool
-    )
 
     # Dynamic planning
 
@@ -76,10 +72,5 @@ def create_execution_plan(
         plan.append(
             "general"
         )
-
-    print(
-        "EXECUTION PLAN:",
-        plan
-    )
 
     return plan

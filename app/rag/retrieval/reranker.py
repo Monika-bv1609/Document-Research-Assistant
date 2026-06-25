@@ -45,22 +45,4 @@ def rerank_chunks(question, chunks, top_n=3):
 
     reranked_chunks = []
 
-    print("\n========== RERANKING ==========")
-
-    for result in results:
-
-        index = result["index"]
-
-        score = result["relevance_score"]
-
-        print(
-            f"Score={score:.4f} | Source={chunks[index]['metadata']['source']} | Chunk={chunks[index]['metadata']['chunk_index']}"
-        )
-
-        reranked_chunks.append(
-            chunks[index]
-        )
-
-    print("===============================\n")
-
     return reranked_chunks

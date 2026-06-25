@@ -31,7 +31,7 @@ def get_weather(
         # Convert to JSON
         data = response.json()
 
-        print(data)
+
 
         # Extract details
         temperature = data["main"]["temp"]
