@@ -8,6 +8,7 @@ from fastapi import (
 
 import shutil
 
+from app.config import RERANK_THRESHOLD
 from app.rag.processing.pdf_reader import (
     read_pdf
 )
@@ -172,6 +173,20 @@ async def ask_pdf(
         top_n=3
     )
 
+    if relevant_chunks:
+
+        top_score = relevant_chunks[0]["rerank_score"]
+
+        print(f"Top Rerank Score: {top_score:.4f}")
+
+        if top_score < RERANK_THRESHOLD:
+
+            return {
+                "question": question,
+                "answer": "I couldn't find this information in the uploaded HR policy documents.",
+                "retrieved_chunks": []
+            }
+
     # Merge top chunk contexts
     context = "\n\n".join(
 
@@ -186,7 +201,7 @@ async def ask_pdf(
 
         return {
             "question": question,
-            "answer": f"No documents found for policy type: {policy_type}",
+             "answer": "I couldn't find this information in the uploaded HR policy documents.",
             "retrieved_chunks": []
         }
 
