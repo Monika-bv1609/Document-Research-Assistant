@@ -63,9 +63,11 @@ def rerank_chunks(question, chunks, top_n=3):
             f"Chunk={chunks[index]['metadata']['chunk_index']}"
         )
 
-        reranked_chunks.append(
-            chunks[index]
-        )
+        chunk = chunks[index].copy()
+
+        chunk["rerank_score"] = score
+
+        reranked_chunks.append(chunk)
 
     print("===============================\n")
 

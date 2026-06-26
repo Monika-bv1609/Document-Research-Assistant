@@ -22,6 +22,10 @@ def bm25_search(question, policy_type=None, top_k=10):
     documents = results["documents"]
     metadatas = results["metadatas"]
 
+    if not documents:
+        print(f"No documents found for policy type: {policy_type}")
+        return []
+
     # Tokenize
     tokenized_docs = [
         doc.lower().split()
